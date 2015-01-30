@@ -5,6 +5,7 @@ case $1 in
     echo -e "\n> Examples:"
     echo -e "vju up                      => vagrant up, and it will restart the Juju's agents."
     echo -e "vju down                    => vagrant suspend"
+    echo -e "vju in                      => vagrant ssh"
     echo -e "vju alias demo/0 demo.local => Will add something like '10.0.3.175  demo.local' at the end of /etc/hosts file."
     exit 0
   ;;
@@ -17,6 +18,11 @@ case $1 in
   
   "down" )
     vagrant suspend
+    exit 0
+  ;;
+
+  "in" )
+    vagrant ssh
     exit 0
   ;;
 
