@@ -1,5 +1,11 @@
 # vju
-Just another Vagrant file to get Juju running quickly, but this one is clean and ready to rumble in your host.
+Use vju (Juju and Vagrant) command to get a fresh Juju local, which haves a clean way to rumble from your host.
+
+### Dependencies:
+- vagrant plugin install vagrant-triggers 
+
+**Only tested in Mac OSX Yosemite.**
+
 
 ## Examples:
 ```
