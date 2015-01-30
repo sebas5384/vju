@@ -4,6 +4,12 @@ Use vju (Juju and Vagrant) command to get a fresh Juju local, which haves a clea
 ### Dependencies:
 - vagrant plugin install vagrant-triggers 
 
+### Install with Brew.
+```
+cd path/to/where/this/code/was/cloned
+brew install brew-formula/vju.rb
+```
+
 **Only tested in Mac OSX Yosemite.**
 
 ## Examples:
