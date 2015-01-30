@@ -3,7 +3,8 @@ Use vju (Juju and Vagrant) command to get a fresh Juju local, which haves a clea
 
 ## Examples:
 ```
-vju up                      => vagrant up
+vju up                      => vagrant up, and it will restart the Juju's agents.
 vju down                    => vagrant suspend
+vju in                      => vagrant ssh
 vju alias demo/0 demo.local => Will add something like '10.0.3.175  demo.local' at the end of /etc/hosts file.
 ```
