@@ -10,8 +10,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  # config.vm.box = "ubuntu/trusty64"
-  config.vm.box = "Ubuntu 14.04"
+  config.vm.box = "ubuntu/trusty64"
+  # config.vm.box = "Ubuntu 14.04"
 
   # Uncomment if you want to download the last release.
   # config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/trusty-server-cloudimg-amd64-juju-vagrant-disk1.box"
