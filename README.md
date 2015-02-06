@@ -2,12 +2,19 @@
 Use vju (Juju and Vagrant) command to get a fresh Juju local, which haves a clean way to rumble from your host.
 
 ### Dependencies:
-- vagrant plugin install vagrant-triggers 
+- Vagrant.
+- VirtualBox.
+- Vagrant plugin vagrant-triggers. Use "vju init" and it will install.
+
+### Suggested:
+- SSHFS to access files into the containers. In [Mac OSX](https://github.com/osxfuse/osxfuse/wiki/SSHFS).
 
 ### Install with Brew.
 ```
-cd path/to/where/this/code/was/cloned
+git clone https://github.com/sebas5384/vju.git
+cd ./vju
 brew install brew-formula/vju.rb
+vju help
 ```
 
 **Only tested in Mac OSX Yosemite.**
@@ -17,6 +24,9 @@ brew install brew-formula/vju.rb
 #####################
 # Vagrant commands. #
 #####################
+
+# Initialize vju by creating a Vagrant file and downloading dependencies.
+vju init
 
 # vagrant up, and it will restart the Juju's agents.
 vju up
@@ -48,6 +58,6 @@ vju deploy ubuntu trusty-sandbox
 
 # Solve the dataset size problem when deploying MySql charm.
 vju deploy mysql
-vju set mysql dataset-size='512M'
+vju set mysql dataset-size='1024M'
 vju resolved -r mysql/# <-- Number of the unit.
 ```

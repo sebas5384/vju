@@ -4,13 +4,39 @@ if [ -f $SHARE ]; then
   SHARE="../share"
 fi
 
+vju_help() {
+  echo -e "\n>> Examples:"
+  echo -e "\n$ vju init \n=> Like 'vagrant init', but with vju's own version of Vagrant file."
+  echo -e "\n$ vju up   \n=> Executes 'vagrant up', and it will restart the Juju's agents."
+  echo -e "\n$ vju down \n=> Executes 'vagrant suspend'."
+  echo -e "\n$ vju in   \n=> Executes 'vagrant ssh'."
+  echo -e "\n$ vju deploy cs:~sebas5384/precise/drupal mysite \n=> Will deploy a new Drupal charm with the name mysite."
+  echo -e "\n$ vju alias mysite/0 mysite.local \n=> Will add something like '10.0.3.175  mysite.local' at the end of /etc/hosts file."
+}
+
+vju_status() {
+  echo "> Checking status..."
+
+  if [ ! -f ./Vagrantfile ]; then
+    echo -e "\n[Error] Maybe you forgot to do 'vju init'."
+    exit 1
+  fi
+
+  if [[ ! -z `vagrant status | grep "vagrant up"` ]]; then
+    echo -e "\n[Error] You didn't bootup yet, do 'vju up'."
+    exit 1
+  fi
+}
+
+# Commands.
 case $1 in
-	"help" )
-    echo -e "\n> Examples:"
-    echo -e "vju up                      => vagrant up, and it will restart the Juju's agents."
-    echo -e "vju down                    => vagrant suspend"
-    echo -e "vju in                      => vagrant ssh"
-    echo -e "vju alias demo/0 demo.local => Will add something like '10.0.3.175  demo.local' at the end of /etc/hosts file."
+  "" )
+    vju_status
+    exit 0
+  ;;
+
+  "help" )
+    vju_help
     exit 0
   ;;
 
