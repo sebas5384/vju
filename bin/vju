@@ -73,46 +73,46 @@ case $1 in
   ;;
 
   "alias" )
-		
-		if [[ -z $2 || -z $3 ]]; then
-			echo -e "\n> Nope! here's an example:\n$ vju alias demo/0 demo.local"
-			exit 1
-		fi
+    
+    if [[ -z $2 || -z $3 ]]; then
+      echo -e "\n> Nope! here's an example:\n$ vju alias demo/0 demo.local"
+      exit 1
+    fi
 
-		if [ ! -f /etc/hosts ]; then
-			echo -e "\n> Where's the /etc/hosts file?\nHey! this only works in GNU/Linux."
-			exit 1
-		fi
+    if [ ! -f /etc/hosts ]; then
+      echo -e "\n> Where's the /etc/hosts file?\nHey! this only works in GNU/Linux."
+      exit 1
+    fi
 
-  	if [ -z `cat /etc/hosts | grep "\ ${3}$"` ]; then
-  		echo -e "\n> Getting the service's public address."
+    if [ -z `cat /etc/hosts | grep "\ ${3}$"` ]; then
+      echo -e "\n> Getting the service's public address."
 
-  		service=`echo -e "${2}" | cut -d"/" -f1`
-  		unit=`echo -e "${2}" | cut -d"/" -f2`
+      service=`echo -e "${2}" | cut -d"/" -f1`
+      unit=`echo -e "${2}" | cut -d"/" -f2`
 
-  		container_ip=$(vagrant ssh -c 'juju status' | sed '/'"${service}\/${unit}"'/,/public\-address/!d' | sed '/public\-address/!d' | cut -d':' -f2  | tr -d ' ')
-  		if [ -z $container_ip ]; then
-  			echo -e "\n> The service $service doesn't exist, or isn't have an IP yet."
-  			exit 1
-  		fi
+      container_ip=$(vagrant ssh -c 'juju status' | sed '/'"${service}\/${unit}"'/,/public\-address/!d' | sed '/public\-address/!d' | cut -d':' -f2  | tr -d ' ')
+      if [ -z $container_ip ]; then
+        echo -e "\n> The service $service doesn't exist, or isn't have an IP yet."
+        exit 1
+      fi
 
-			hosts_line="${container_ip%?}  $3"
-			
-			echo -e "\n> \"${hosts_line}\" added into the /etc/hosts file."
+      hosts_line="${container_ip%?}  $3"
+      
+      echo -e "\n> \"${hosts_line}\" added into the /etc/hosts file."
 
-			add_command="echo -e '\n${hosts_line}' >> /etc/hosts"
-			sudo bash -c "$add_command"
-			
-			exit 0
+      add_command="echo -e '\n${hosts_line}' >> /etc/hosts"
+      sudo bash -c "$add_command"
+      
+      exit 0
 
-		else
-			echo -e "\n> The domain ${3} is already in your hosts file.\nRemove it if you want to add a new one."
-			exit 1
-		fi
+    else
+      echo -e "\n> The domain ${3} is already in your hosts file.\nRemove it if you want to add a new one."
+      exit 1
+    fi
   ;;
 
-	# Proxy Juju command.
+  # Proxy Juju command.
   * )
-		vagrant ssh -c "juju $*"
-	;;
+    vagrant ssh -c "juju $*"
+  ;;
 esac
