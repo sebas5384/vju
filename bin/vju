@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -f $SHARE ]; then
+  SHARE="../share"
+fi
+
 case $1 in
 	"help" )
     echo -e "\n> Examples:"
@@ -24,6 +28,22 @@ case $1 in
   "in" )
     vagrant ssh
     exit 0
+  ;;
+
+  "init" )
+    if [ -f ./Vagrantfile ]; then
+      echo "> [Warning] You already have a Vagrant file. Nothing happened here."
+    else
+      install $SHARE/Vagrantfile .
+
+      # Install vagrant-triggers
+      if [[ -z `vagrant plugin list | grep "vagrant-triggers"` ]]; then
+        vagrant plugin install vagrant-triggers
+      fi
+
+      echo "> Yeah! now you are ready to bootup! \"vju up\""
+      exit 0
+    fi
   ;;
 
   "alias" )

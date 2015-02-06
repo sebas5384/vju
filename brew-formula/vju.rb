@@ -4,6 +4,12 @@ class Vju < Formula
   version "0.3"
 
   def install
-  	bin.install "bin/vju"
+
+    libexec.install "bin/vju"
+    sh = bin + "vju"
+    sh.write("#!/usr/bin/env bash\n\n/usr/bin/env SHARE=#{share} #{libexec}/vju \"$@\"")
+    chmod 0755, sh
+
+  	share.install "Vagrantfile"
   end
 end
