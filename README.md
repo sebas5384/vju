@@ -58,6 +58,6 @@ vju deploy ubuntu trusty-sandbox
 
 # Solve the dataset size problem when deploying MySql charm.
 vju deploy mysql
-vju set mysql dataset-size='1024M'
+vju set mysql dataset-size='512M'
 vju resolved -r mysql/# <-- Number of the unit.
 ```
