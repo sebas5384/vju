@@ -14,7 +14,7 @@ Use vju (Juju and Vagrant) command to get a fresh Juju local, which haves a clea
 git clone https://github.com/sebas5384/vju.git
 cd ./vju
 brew install brew-formula/vju.rb
-vju help
+vju
 ```
 
 **Only tested in Mac OSX Yosemite.**
@@ -56,8 +56,21 @@ vju deploy ubuntu trusty-sandbox
 # Any other Juju command. #
 ###########################
 
-# Solve the dataset size problem when deploying MySql charm.
-vju deploy mysql
-vju set mysql dataset-size='512M'
-vju resolved -r mysql/# <-- Number of the unit.
+vju status
+
+vju add-relation mysql drupal
+
+
+#####################################################
+# Solve problem when deploying MYSQL charm locally. #
+#####################################################
+
+# Create a config file.
+echo -e "mysql:\n  dataset-size: 512M" > mysql-config.yaml
+
+# Deploy the charm passing the relative path.
+vju deploy --config mysql-config.yaml mysql
 ```
+
+### Declaimer:
+The name "vju" probably is not a final name for this command line tool.
