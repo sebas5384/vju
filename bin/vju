@@ -113,6 +113,6 @@ case $1 in
 
   # Proxy Juju command.
   * )
-    vagrant ssh -c "juju $*"
+    vagrant ssh -c "cd /vagrant; juju $*"
   ;;
 esac
