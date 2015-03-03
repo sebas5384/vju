@@ -4,6 +4,10 @@ if [ -f $SHARE ]; then
   SHARE="../share"
 fi
 
+vju_command=$1
+vju_command_param=$2
+vju_command_param2=$3
+
 vju_help() {
   echo -e "\n>> Examples:"
   echo -e "\n$ vju init \n=> Like 'vagrant init', but with vju's own version of Vagrant file."
@@ -12,10 +16,23 @@ vju_help() {
   echo -e "\n$ vju in   \n=> Executes 'vagrant ssh'."
   echo -e "\n$ vju deploy cs:~sebas5384/drupal mysite \n=> Will deploy a new Drupal charm with the name mysite."
   echo -e "\n$ vju alias mysite/0 mysite.local \n=> Will add something like '10.0.3.175  mysite.local' at the end of /etc/hosts file."
+  echo -e "\n$ vju mount mysite/0:/var/www www \n=> Mount the /var/www from the service machine into the host at ./www"
+}
+
+vju_get_container_ip() {
+  IFS='/' read -r service unit <<< "$1"
+  container_ip=$(vagrant ssh -c 'juju status' | sed '/'"${service}\/${unit}"'/,/public\-address/!d' | sed '/public\-address/!d' | cut -d':' -f2  | tr -d ' ')
+
+  if [[ -z $container_ip ]]; then
+    echo -e "\n> Couldn't find the service."
+    exit 1
+  else
+    echo ${container_ip%?}
+  fi
 }
 
 # Commands.
-case $1 in
+case $vju_command in
   "" )
     vju_help
     exit 0
@@ -54,8 +71,7 @@ case $1 in
   ;;
 
   "alias" )
-    
-    if [[ -z $2 || -z $3 ]]; then
+    if [[ -z $vju_command_param || -z $vju_command_param2 ]]; then
       echo -e "\n> Nope! here's an example:\n$ vju alias demo/0 demo.local"
       exit 1
     fi
@@ -65,19 +81,18 @@ case $1 in
       exit 1
     fi
 
-    if [ -z `cat /etc/hosts | grep "\ ${3}$"` ]; then
+    if [ -z `cat /etc/hosts | grep "\ ${vju_command_param2}$"` ]; then
       echo -e "\n> Getting the service's public address."
 
-      service=`echo -e "${2}" | cut -d"/" -f1`
-      unit=`echo -e "${2}" | cut -d"/" -f2`
+      # Get the container IP.
+      container_ip=`vju_get_container_ip "$vju_command_param"`
 
-      container_ip=$(vagrant ssh -c 'juju status' | sed '/'"${service}\/${unit}"'/,/public\-address/!d' | sed '/public\-address/!d' | cut -d':' -f2  | tr -d ' ')
-      if [ -z $container_ip ]; then
+      if [[ -z $container_ip ]]; then
         echo -e "\n> The service $service doesn't exist, or isn't have an IP yet."
         exit 1
       fi
 
-      hosts_line="${container_ip%?}  $3"
+      hosts_line="${container_ip}  $vju_command_param2"
       
       echo -e "\n> \"${hosts_line}\" added into the /etc/hosts file."
 
@@ -87,8 +102,34 @@ case $1 in
       exit 0
 
     else
-      echo -e "\n> The domain ${3} is already in your hosts file.\nRemove it if you want to add a new one."
+      echo -e "\n> The domain ${vju_command_param2} is already in your hosts file.\nRemove it if you want to add a new one."
       exit 1
+    fi
+  ;;
+
+  # vju mount drupal/0:/var/www drupal-www
+  "mount" )
+    # Check if the command ssfs is installed.
+    if [[ ! $(type sshfs 2>/dev/null) ]]; then
+      echo -e "\n> To use this command you must install SSHFS."
+    fi
+
+    IFS=':' read -r mount_service mount_service_path <<< "$vju_command_param"
+
+    mount_dest=$vju_command_param2
+
+    if [[ -z $mount_service || -z $mount_service_path || -z $mount_dest ]]; then
+      echo -e "\n> Some parameter was missing, seek manual."
+      exit 1
+    else
+      container_ip=`vju_get_container_ip "$mount_service"`
+
+      # Create dir if not exist.
+      if [[ ! -d $mount_dest ]]; then
+        mkdir $mount_dest
+      fi
+
+      sshfs ubuntu@${container_ip}:${mount_service_path} ${mount_dest}
     fi
   ;;
 

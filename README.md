@@ -42,14 +42,20 @@ vju in
 # Access the machine from your browser using a domain. #
 ########################################################
 
-# Will add something like '10.0.3.175  demo.local' at the end of /etc/hosts file.
-vju alias ubuntu/0 ubuntu.local
-
 # Deploy an Ubuntu machine.
 vju deploy ubuntu
 
 # Deploy an Ubuntu machine called trusty-sandbox.
 vju deploy ubuntu trusty-sandbox
+
+# Will add something like '10.0.3.175  demo.local' at the end of /etc/hosts file.
+vju alias ubuntu/0 ubuntu.local
+
+# Mount the /var/www from the service machine into the host at ./www
+vju mount mysite/0:/var/www www
+cd www
+# Umount the ./www
+umount www
 
 
 ###########################
